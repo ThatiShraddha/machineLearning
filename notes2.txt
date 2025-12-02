@@ -958,3 +958,55 @@ pipeline {
 
 
 
+
+
+
+//jenkins script-9
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK21'
+        maven 'MAVEN_HOME'
+    }
+
+    stages {
+
+        stage('Git Clone & Clean') {
+            steps {
+                deleteDir()
+                bat "git clone https://github.com/vam1207/Maven-Webapp"
+            }
+        }
+
+        stage('Build (Clean)') {
+            steps {
+                bat "mvn clean -f Maven-Webapp/pom.xml"
+            }
+        }
+
+        stage('Install') {
+            steps {
+                bat "mvn install -f Maven-Webapp/pom.xml"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat "mvn test -f Maven-Webapp/pom.xml"
+            }
+        }
+
+        stage('Package') {
+            steps {
+                bat "mvn package -f Maven-Webapp/pom.xml"
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'Maven-Webapp/target/*.war', fingerprint: true
+            }
+        }
+    }
+}
